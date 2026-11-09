@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f5f1">
+    <title>ICB | Учебный портал</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="student-manager.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <video
+      class="wallpaper-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="https://moewalls.com/wp-content/uploads/2022/11/wavy-grass-thumb-728x410.jpg"
+      aria-hidden="true"
+      tabindex="-1">
+      <source src="https://moewalls.com/wp-content/uploads/preview/2022/wavy-grass-preview.webm" type="video/webm">
+    </video>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#main" aria-label="К ведомости">
+          <span class="brand-mark" aria-hidden="true">У</span>
+          <span>ICB · учебный портал</span>
+        </a>
+        <nav class="portal-switch" aria-label="Выбор кабинета">
+          <button class="portal-tab is-active" type="button" data-portal="teacher" aria-pressed="true">Преподаватель</button>
+          <button class="portal-tab" type="button" data-portal="student" aria-pressed="false">Кабинет студента</button>
+        </nav>
+      </header>
+
+      <main id="main">
+        <section id="teacher-portal">
+        <section class="page-heading" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow">МЕЖДУНАРОДНЫЙ КОЛЛЕДЖ БИЗНЕСА И КОММУНИКАЦИЙ</p>
+            <h1 id="page-title">Кабинет преподавателя</h1>
+            <p class="page-description">Ведомости, результаты и успеваемость студентов ICB.</p>
+          </div>
+          <button class="button button-quiet" id="clear-all" type="button" title="Удалить всех студентов">
+            Очистить данные
+          </button>
+        </section>
+
+        <section class="summary-grid" aria-label="Сводка по ведомости">
+          <article class="summary-item">
+            <span class="summary-label">Студентов</span>
+            <strong class="summary-value" id="student-count">0</strong>
+            <span class="summary-note">в ведомости</span>
+          </article>
+          <article class="summary-item summary-item-green">
+            <span class="summary-label">Высокая успеваемость</span>
+            <strong class="summary-value" id="high-count">0</strong>
+            <span class="summary-note">средний балл от 90</span>
+          </article>
+          <article class="summary-item summary-item-red">
+            <span class="summary-label">Нужна поддержка</span>
+            <strong class="summary-value" id="low-count">0</strong>
+            <span class="summary-note">средний балл ниже 50</span>
+          </article>
+        </section>
+
+        <section class="insights-panel" aria-label="Аналитика успеваемости группы">
+          <div class="group-average">
+            <p class="eyebrow">СРЕДНИЙ БАЛЛ ГРУППЫ</p>
+            <div class="group-average-number">
+              <strong id="group-average">—</strong>
+              <span>из 100</span>
+            </div>
+            <div class="insight-track" id="group-average-track" role="progressbar" aria-label="Средний балл по всем оценкам" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span class="insight-fill" id="group-average-bar"></span>
+            </div>
+            <p class="insight-caption" id="assessment-summary">Оценок пока нет</p>
+          </div>
+          <div class="subject-insights" id="subject-insights" aria-label="Средний балл по предметам"></div>
+        </section>
+
+        <div class="workspace-grid">
+          <aside class="form-panel" aria-labelledby="form-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">НОВАЯ ЗАПИСЬ</p>
+                <h2 id="form-title">Добавить студента</h2>
+              </div>
+              <span class="panel-index" aria-hidden="true">01</span>
+            </div>
+            <form id="student-form" novalidate>
+              <label class="field-label" for="student-name">Имя студента</label>
+              <input id="student-name" name="name" type="text" maxlength="60" autocomplete="off" placeholder="Например, Айдана">
+              <p class="field-hint">Укажите имя и баллы по предметам ICB.</p>
+
+              <fieldset class="grades-fieldset">
+                <legend>Оценки <span>0–100 баллов</span></legend>
+                <div id="grade-fields" class="grade-input-grid"></div>
+              </fieldset>
+
+              <p class="form-error" id="form-error" role="alert" aria-live="polite"></p>
+              <p class="account-notice" id="account-notice" aria-live="polite" hidden></p>
+              <button class="button button-primary submit-button" type="submit">
+                <span aria-hidden="true">＋</span> Добавить в ведомость
+              </button>
+            </form>
+            <p class="scale-note"><span class="scale-dot" aria-hidden="true"></span>Положительная оценка — 50 баллов и выше</p>
+          </aside>
+
+          <section class="roster-panel" aria-labelledby="roster-title">
+            <div class="roster-heading">
+              <div>
+                <p class="eyebrow">РЕЗУЛЬТАТЫ ГРУППЫ</p>
+                <h2 id="roster-title">Студенты</h2>
+              </div>
+              <label class="search-box">
+                <span class="visually-hidden">Поиск студента</span>
+                <span aria-hidden="true">⌕</span>
+                <input id="student-search" type="search" placeholder="Найти студента…" autocomplete="off">
+              </label>
+            </div>
+
+            <div class="filter-bar" role="group" aria-label="Фильтр по уровню успеваемости">
+              <span class="filter-label">Уровень</span>
+              <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">Все <span>0</span></button>
+              <button class="filter-button" type="button" data-filter="Отлично" aria-label="Отлично" aria-pressed="false">Отлично <span>0</span></button>
+              <button class="filter-button" type="button" data-filter="Хорошо" aria-label="Хорошо" aria-pressed="false">Хорошо <span>0</span></button>
+              <button class="filter-button" type="button" data-filter="Удовлетворительно" aria-label="Удовлетворительно" aria-pressed="false">Удовл. <span>0</span></button>
+              <button class="filter-button" type="button" data-filter="Неудовлетворительно" aria-label="Неудовлетворительно" aria-pressed="false">Низкий <span>0</span></button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Студент</th>
+                    <th scope="col">Предметы</th>
+                    <th scope="col" class="average-heading">
+                      <button id="sort-average" class="sort-button" type="button" aria-label="Сортировать по среднему баллу">
+                        Средний балл <span id="sort-indicator" aria-hidden="true">↓</span>
+                      </button>
+                    </th>
+                    <th scope="col">Уровень</th>
+                    <th scope="col"><span class="visually-hidden">Действия</span></th>
+                  </tr>
+                </thead>
+                <tbody id="student-list"></tbody>
+              </table>
+              <div class="empty-state" id="empty-state" hidden>
+                <span class="empty-mark" aria-hidden="true">—</span>
+                <strong id="empty-title">Пока нет студентов</strong>
+                <p id="empty-description">Добавьте первую запись в форму слева.</p>
+              </div>
+            </div>
+            <p class="table-footnote" id="table-footnote">Нажмите на имя студента, чтобы посмотреть оценки.</p>
+          </section>
+        </div>
+        </section>
+
+        <section class="student-portal" id="student-portal" hidden>
+          <div class="student-portal-heading">
+            <div>
+              <p class="eyebrow">ICB · МЕЖДУНАРОДНЫЙ КОЛЛЕДЖ БИЗНЕСА И КОММУНИКАЦИЙ</p>
+              <h1>Кабинет студента</h1>
+              <p class="page-description">Ваши оценки, предметы и текущий результат.</p>
+            </div>
+            <span class="student-term">УЧЕБНЫЙ ЖУРНАЛ</span>
+          </div>
+
+          <section class="student-login-panel" id="student-login-view" aria-labelledby="student-login-title">
+            <div class="login-emblem" aria-hidden="true">ICB</div>
+            <p class="eyebrow">ЛИЧНЫЙ ДОСТУП</p>
+            <h2 id="student-login-title">Войти в аккаунт</h2>
+            <p class="login-description">Введите логин и код доступа, выданные преподавателем.</p>
+            <form id="student-login-form" class="student-login-form" novalidate>
+              <label class="field-label" for="student-login">Логин</label>
+              <input id="student-login" name="login" type="text" autocomplete="username" placeholder="Например, ICB001">
+              <label class="field-label" for="student-pin">Код доступа</label>
+              <input id="student-pin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Ваш код доступа">
+              <p class="form-error" id="login-error" role="alert" aria-live="polite"></p>
+              <button class="button button-primary" type="submit">Войти в кабинет</button>
+            </form>
+            <details class="demo-access">
+              <summary>Данные для демонстрационного входа</summary>
+              <p>Логин: <strong>ICB001</strong> · Код: <strong>246810</strong></p>
+            </details>
+          </section>
+
+          <section class="student-dashboard" id="student-dashboard-view" hidden>
+            <div class="student-welcome">
+              <div class="student-avatar" id="student-avatar" aria-hidden="true">ICB</div>
+              <div class="student-welcome-copy">
+                <p class="eyebrow">СТУДЕНТ ICB</p>
+                <h2 id="student-welcome-name">Студент</h2>
+                <p id="student-welcome-login" class="student-login-label"></p>
+              </div>
+              <button class="button button-quiet student-logout" id="student-logout" type="button">Выйти</button>
+            </div>
+            <div class="student-summary-grid">
+              <article class="student-summary-item"><span>Мой средний балл</span><strong id="student-average">—</strong></article>
+              <article class="student-summary-item"><span>Сдано предметов</span><strong id="student-passed-count">—</strong></article>
+              <article class="student-summary-item"><span>Оценок в журнале</span><strong id="student-grade-count">—</strong></article>
+            </div>
+            <section class="student-grades-panel" aria-labelledby="student-grades-title">
+              <div class="student-section-heading">
+                <div><p class="eyebrow">МОЯ УСПЕВАЕМОСТЬ</p><h2 id="student-grades-title">Предметы и оценки</h2></div>
+                <span class="updated-label" id="student-updated">Данные обновляются преподавателем</span>
+              </div>
+              <div class="student-grade-list" id="student-grade-list"></div>
+            </section>
+            <p class="student-readonly-note">Оценки доступны только для просмотра. Если заметили ошибку, обратитесь к преподавателю.</p>
+          </section>
+        </section>
+      </main>
+
+      <footer class="footer"><span>Оценки от 0 до 100</span><span>Данные хранятся в этом браузере</span></footer>
+    </div>
+
+    <dialog class="grades-dialog" id="grades-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">ОЦЕНКИ ПО ПРЕДМЕТАМ</p>
+          <h2 id="dialog-title">Студент</h2>
+        </div>
+        <button class="icon-button" id="close-dialog" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <div id="dialog-grades" class="dialog-grades"></div>
+      <p id="dialog-summary" class="dialog-summary"></p>
+    </dialog>
+    <dialog class="grades-dialog edit-dialog" id="edit-student-dialog" aria-labelledby="edit-dialog-title">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ</p><h2 id="edit-dialog-title">Изменить оценки</h2></div>
+        <button class="icon-button" id="close-edit-dialog" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <form id="edit-student-form" novalidate>
+        <div id="edit-grade-fields" class="edit-grade-fields"></div>
+        <p class="form-error" id="edit-error" role="alert" aria-live="polite"></p>
+        <button class="button button-primary" type="submit">Сохранить оценки</button>
+      </form>
+    </dialog>
+  </body>
+</html>
